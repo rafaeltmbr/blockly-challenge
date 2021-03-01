@@ -20,10 +20,10 @@ export const movementRotate = {
     },
     {
       type: "field_dropdown",
-      name: "angle",
+      name: "direction",
       options: [
-        ["left ↺", "-90"],
-        ["right ↻", "90"],
+        ["left ↺", "L"],
+        ["right ↻", "R"],
       ],
     },
   ],
@@ -33,7 +33,8 @@ export const movementRotate = {
   colour: 285,
   tooltip: "Turn to the specified direction",
   helpUrl: "",
-  generatorCallback: (block) => `rotate(${block.getFieldValue("angle")});\n`,
+  generatorCallback: (block) =>
+    block.getFieldValue("direction") === "L" ? "turnLeft();\n" : "turnRight();\n",
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#m5x4ff
@@ -48,9 +49,9 @@ export const controlsIfPath = {
       type: "field_dropdown",
       name: "direction",
       options: [
-        ["ahead", "ahead"],
-        ["to the left ↺", "left"],
-        ["to the right ↻", "right"],
+        ["ahead", "A"],
+        ["to the left ↺", "L"],
+        ["to the right ↻", "R"],
       ],
     },
     {
@@ -67,10 +68,19 @@ export const controlsIfPath = {
   colour: 210,
   tooltip: "Execute the 'do' statement if is possible to go to the specified direction",
   helpUrl: "",
-  generatorCallback: (block) =>
-    `if (hasPathTo('${block.getFieldValue("direction")}')) {
-  ${window.Blockly.JavaScript.statementToCode(block, "statement")}
-}`,
+  generatorCallback: (block) => {
+    const direction = block.getFieldValue("direction");
+    const condition =
+      direction === "A"
+        ? "isPathForward()"
+        : direction === "L"
+        ? "isPathToLeft()"
+        : "isPathToRight()";
+
+    return `if (${condition}) {
+  ${window.Blockly.JavaScript.statementToCode(block, "statement") || ""}
+}`;
+  },
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#buty92
@@ -85,9 +95,9 @@ export const controlsIfElsePath = {
       type: "field_dropdown",
       name: "direction",
       options: [
-        ["ahead", "ahead"],
-        ["to the left ↺", "left"],
-        ["to the right ↻", "right"],
+        ["ahead", "A"],
+        ["to the left ↺", "L"],
+        ["to the right ↻", "R"],
       ],
     },
     {
@@ -109,18 +119,27 @@ export const controlsIfElsePath = {
   tooltip:
     "Execute the 'do' statement if is possible to go to the specified direction. Otherwise, it executes the 'else' statement.",
   helpUrl: "",
-  generatorCallback: (block) =>
-    `if (hasPathTo('${block.getFieldValue("direction")}')) {
-  ${window.Blockly.JavaScript.statementToCode(block, "truthy_statement")}
+  generatorCallback: (block) => {
+    const direction = block.getFieldValue("direction");
+    const condition =
+      direction === "A"
+        ? "isPathForward()"
+        : direction === "L"
+        ? "isPathToLeft()"
+        : "isPathToRight()";
+
+    return `if (${condition}) {
+  ${window.Blockly.JavaScript.statementToCode(block, "truthy_statement") || ""}
 } else {
-  ${window.Blockly.JavaScript.statementToCode(block, "falsy_statement")}
-}`,
+  ${window.Blockly.JavaScript.statementToCode(block, "falsy_statement") || ""}
+}`;
+  },
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#9ag263
 export const controlsRepeatUntilReachEnd = {
   type: "controls_repeat_until_reach_end",
-  message0: "repeat until ⚐ %1 %2",
+  message0: "repeat until ⚐ %1 do %2",
   args0: [
     {
       type: "input_dummy",
@@ -136,7 +155,7 @@ export const controlsRepeatUntilReachEnd = {
   tooltip: "Repeat the inside code until end is reached",
   helpUrl: "",
   generatorCallback: (block) => `while (notDone()) {
-  ${window.Blockly.JavaScript.statementToCode(block, "statement")}
+  ${window.Blockly.JavaScript.statementToCode(block, "statement") || ""}
 }`,
 };
 
