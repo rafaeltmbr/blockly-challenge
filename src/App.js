@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import BlocklyWidget from "./components/BlocklyWidget";
+import Blockly from "blockly";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.sass";
+import challenges from "./challenges";
+
+export default function App() {
+  const [challengeIndex, setChallengeIndex] = useState(0);
+  const workspace = useRef(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      workspace.current.addChangeListener(() => {
+        const code = Blockly.JavaScript.workspaceToCode(workspace.current);
+        console.log(code);
+      });
+    }, 0);
+  }, [workspace]);
+
+  const toolboxConfig = useMemo(() => {
+    return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
+  }, [challengeIndex]);
+
+  return <BlocklyWidget toolboxConfig={toolboxConfig} workspaceRef={workspace} />;
 }
-
-export default App;
