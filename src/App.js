@@ -4,6 +4,7 @@ import Blockly from "blockly";
 
 import "./App.sass";
 import challenges from "./challenges";
+import Game from "./components/Game";
 
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(0);
@@ -22,5 +23,17 @@ export default function App() {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
   }, [challengeIndex]);
 
-  return <BlocklyWidget toolboxConfig={toolboxConfig} workspaceRef={workspace} />;
+  const map = useMemo(() => {
+    return challenges[challengeIndex] && challenges[challengeIndex].map;
+  }, [challengeIndex]);
+
+  return (
+    <div className="app">
+      <div className="game-button-container">
+        <Game map={map} />
+        <button className="run-button">Run</button>
+      </div>
+      <BlocklyWidget toolboxConfig={toolboxConfig} workspaceRef={workspace} />
+    </div>
+  );
 }

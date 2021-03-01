@@ -5,6 +5,54 @@
   outline: none
   font-family: sans-serif
 
-body
+.app
+  display: flex
+  flex-direction: row
+  align-items: center
   min-height: 100%
   padding: 1rem
+
+  .game-button-container
+    height: calc(100vh - 2rem)
+    display: flex
+    flex-direction: column
+    align-items: stretch
+    padding-right: 1rem
+    flex: 1
+    max-width: calc(100vh - 6rem)
+
+  .blockly-div
+    flex: 1
+    height: calc(100vh - 2rem)
+
+  .game-button-container .run-button
+    border: none
+    background-color: royalblue
+    color: white
+    padding: 0.7rem 1.5rem
+    font-size: 1rem
+    cursor: pointer
+    outline: none
+    user-select: none
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.5)
+
+  .game-button-container .game
+    height: 100%
+    margin-bottom: 1rem
+
+@media screen and (max-width: 700px)
+  .app
+    flex-direction: column
+    padding: 0.5rem
+
+    .game-button-container
+      width: 100%
+      padding-right: 0
+
+      .game
+        margin-bottom: 0.5rem
+
+    .blockly-div
+      width: 100%
+      height: 70vh
+      margin-top: 0.5rem
