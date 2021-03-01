@@ -10,6 +10,13 @@ export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(0);
   const workspace = useRef(null);
   const game = useRef(null);
+  const player = useMemo(
+    () => ({
+      angle: 0,
+      position: [0, 0],
+    }),
+    []
+  );
 
   const toolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
@@ -38,7 +45,7 @@ export default function App() {
   return (
     <div className="app">
       <div className="game-button-container">
-        <Game gameRef={game} map={map} />
+        <Game gameRef={game} map={map} player={player} />
         <button onClick={handleRunClick} className="run-button">
           Run
         </button>

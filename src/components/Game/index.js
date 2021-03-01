@@ -2,12 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import "./styles.sass";
 
-const player = {
-  angle: 0,
-  position: [0, 0],
-};
-
-export default function Game({ gameRef, map }) {
+export default function Game({ gameRef, map, player }) {
   const [mapWidth, setMapWidth] = useState(0);
   const [, setRefresh] = useState();
 
@@ -24,27 +19,28 @@ export default function Game({ gameRef, map }) {
 
   const forward = useCallback(() => {
     console.log({ player });
-    if (player.angle === 0 && player.position[0] + 1 < map.size.columns) player.position[0]++;
-    else if (player.angle === 90 && player.position[1]) player.position[1]--;
-    else if (player.angle === 180 && player.position[0]) player.position[0]--;
-    else if (player.angle === 180 && player.position[1] + 1 < map.size.rows) player.position[1]++;
+    const angle = Math.abs(player.angle) % 360;
+    if (angle === 0 && player.position[0] + 1 < map.size.columns) player.position[0]++;
+    else if (angle === 90 && player.position[1]) player.position[1]--;
+    else if (angle === 180 && player.position[0]) player.position[0]--;
+    else if (angle === 270 && player.position[1] + 1 < map.size.rows) player.position[1]++;
 
     refreshScreen();
 
     console.log(`exec: forward ${player.position}`);
-  }, [refreshScreen, map.size]);
+  }, [refreshScreen, player, map.size]);
 
   const turnLeft = useCallback(() => {
-    player.angle = (player.angle + 90) % 360;
+    player.angle = player.angle + 90;
     refreshScreen();
     console.log(`exec: turnLeft ${player.angle}`);
-  }, [refreshScreen]);
+  }, [refreshScreen, player]);
 
   const turnRight = useCallback(() => {
-    player.angle = (player.angle - 90 + 360) % 360;
+    player.angle = player.angle - 90;
     refreshScreen();
     console.log(`exec: turnRight ${player.angle}`);
-  }, [refreshScreen]);
+  }, [refreshScreen, player]);
 
   const gameAPIList = useMemo(
     () => ({
