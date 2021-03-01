@@ -3,21 +3,13 @@ import BlocklyWidget from "./components/BlocklyWidget";
 import Blockly from "blockly";
 
 import "./App.sass";
-import challenges from "./challenges";
+import challenges from "./util/challenges";
 import Game from "./components/Game";
 
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(0);
   const workspace = useRef(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      workspace.current.addChangeListener(() => {
-        const code = Blockly.JavaScript.workspaceToCode(workspace.current);
-        console.log(code);
-      });
-    }, 0);
-  }, [workspace]);
+  const game = useRef(null);
 
   const toolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
@@ -27,11 +19,29 @@ export default function App() {
     return challenges[challengeIndex] && challenges[challengeIndex].map;
   }, [challengeIndex]);
 
+  function handleRunClick() {
+    if (!workspace.current) return;
+
+    const code = Blockly.JavaScript.workspaceToCode(workspace.current);
+    const interpreter = new window.Interpreter(
+      code,
+      game.current && game.current.interpreterInitHandler
+    );
+
+    function nextStep() {
+      if (interpreter.step()) setTimeout(nextStep, 200);
+    }
+
+    nextStep();
+  }
+
   return (
     <div className="app">
       <div className="game-button-container">
-        <Game map={map} />
-        <button className="run-button">Run</button>
+        <Game gameRef={game} map={map} />
+        <button onClick={handleRunClick} className="run-button">
+          Run
+        </button>
       </div>
       <BlocklyWidget toolboxConfig={toolboxConfig} workspaceRef={workspace} />
     </div>

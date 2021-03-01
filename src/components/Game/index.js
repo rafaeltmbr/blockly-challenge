@@ -1,11 +1,76 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import "./styles.sass";
 
-export default function Game({ map }) {
+const player = {
+  angle: 0,
+  position: [0, 0],
+};
+
+export default function Game({ gameRef, map }) {
   const [mapWidth, setMapWidth] = useState(0);
-  const [playerPosition, setPlayerPosition] = useState(map.start);
-  const [playerAngle, setPlayerAngle] = useState(0);
+  const [, setRefresh] = useState();
+
+  useEffect(() => {
+    if (!map.start) return;
+
+    player.position[0] = map.start[0];
+    player.position[1] = map.start[1];
+  }, [map.start]);
+
+  const refreshScreen = useCallback(() => {
+    setRefresh({});
+  }, [setRefresh]);
+
+  const forward = useCallback(() => {
+    console.log({ player });
+    if (player.angle === 0 && player.position[0] + 1 < map.size.columns) player.position[0]++;
+    else if (player.angle === 90 && player.position[1]) player.position[1]--;
+    else if (player.angle === 180 && player.position[0]) player.position[0]--;
+    else if (player.angle === 180 && player.position[1] + 1 < map.size.rows) player.position[1]++;
+
+    refreshScreen();
+
+    console.log(`exec: forward ${player.position}`);
+  }, [refreshScreen, map.size]);
+
+  const turnLeft = useCallback(() => {
+    player.angle = (player.angle + 90) % 360;
+    refreshScreen();
+    console.log(`exec: turnLeft ${player.angle}`);
+  }, [refreshScreen]);
+
+  const turnRight = useCallback(() => {
+    player.angle = (player.angle - 90 + 360) % 360;
+    refreshScreen();
+    console.log(`exec: turnRight ${player.angle}`);
+  }, [refreshScreen]);
+
+  const gameAPIList = useMemo(
+    () => ({
+      forward,
+      turnLeft,
+      turnRight,
+    }),
+    [forward, turnLeft, turnRight]
+  );
+
+  const interpreterInitHandler = useCallback(
+    (interpreter, globalObject) => {
+      Object.keys(gameAPIList).forEach((key) => {
+        interpreter.setProperty(
+          globalObject,
+          key,
+          interpreter.createNativeFunction(gameAPIList[key])
+        );
+      });
+    },
+    [gameAPIList]
+  );
+
+  useEffect(() => {
+    gameRef.current = { interpreterInitHandler };
+  }, [gameRef, interpreterInitHandler]);
 
   useEffect(() => {
     function updateMapWidth() {
@@ -56,9 +121,9 @@ export default function Game({ map }) {
         <div
           className="player"
           style={{
-            "--column": playerPosition[0],
-            "--row": playerPosition[1],
-            "--angle": playerAngle,
+            "--column": player.position[0],
+            "--row": player.position[1],
+            "--angle": -player.angle,
           }}
         >
           ➤
