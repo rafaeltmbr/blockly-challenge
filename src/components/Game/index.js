@@ -19,7 +19,7 @@ export default function Game({ gameRef, map, player }) {
 
   const forward = useCallback(() => {
     console.log({ player });
-    const angle = Math.abs(player.angle) % 360;
+    const angle = Math.abs(player.angle + 360) % 360;
     if (angle === 0 && player.position[0] + 1 < map.size.columns) player.position[0]++;
     else if (angle === 90 && player.position[1]) player.position[1]--;
     else if (angle === 180 && player.position[0]) player.position[0]--;
