@@ -11,7 +11,7 @@ export default function Game({ gameRef, map, player }) {
 
     player.position[0] = map.start[0];
     player.position[1] = map.start[1];
-  }, [map.start]);
+  }, [map.start, player.position]);
 
   const refreshScreen = useCallback(() => {
     setRefresh({});
