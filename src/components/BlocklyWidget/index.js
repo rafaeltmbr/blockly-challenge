@@ -3,10 +3,10 @@ import Blockly from "blockly";
 
 import "./styles.sass";
 
-export default memo(function BlocklyWidget({ toolboxConfig, workspaceRef, style }) {
+export default memo(function BlocklyWidget({ blocklyToolboxConfig, blocklyWorkspaceRef, style }) {
   const [workspace, setWorkspace] = useState(null);
 
-  const blocks = toolboxConfig && toolboxConfig.blocks;
+  const blocks = blocklyToolboxConfig && blocklyToolboxConfig.blocks;
 
   useEffect(() => {
     window.Blockly = Blockly;
@@ -54,8 +54,8 @@ export default memo(function BlocklyWidget({ toolboxConfig, workspaceRef, style 
   }, [toolbox]);
 
   useEffect(() => {
-    workspaceRef.current = workspace;
-  }, [workspace, workspaceRef]);
+    blocklyWorkspaceRef.current = workspace;
+  }, [workspace, blocklyWorkspaceRef]);
 
   return <div className="blockly-div" style={style} />;
 });

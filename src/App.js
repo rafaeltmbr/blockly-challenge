@@ -6,19 +6,19 @@ import "./App.sass";
 import challenges from "./util/challenges";
 import Game from "./components/Game";
 
+const playerInitialCoordinate = {
+  angle: 0,
+  position: [0, 0],
+};
+
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(0);
-  const workspace = useRef(null);
-  const game = useRef(null);
-  const player = useMemo(
-    () => ({
-      angle: 0,
-      position: [0, 0],
-    }),
-    []
-  );
+  const [gameStatus, setGameStatus] = useState("");
+  const blocklyWorkspaceRef = useRef(null);
+  const gameRef = useRef(null);
+  const player = useMemo(() => playerInitialCoordinate, []);
 
-  const toolboxConfig = useMemo(() => {
+  const blocklyToolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
   }, [challengeIndex]);
 
@@ -27,12 +27,12 @@ export default function App() {
   }, [challengeIndex]);
 
   function handleRunClick() {
-    if (!workspace.current) return;
+    if (!blocklyWorkspaceRef.current) return;
 
-    const code = Blockly.JavaScript.workspaceToCode(workspace.current);
+    const code = Blockly.JavaScript.workspaceToCode(blocklyWorkspaceRef.current);
     const interpreter = new window.Interpreter(
       code,
-      game.current && game.current.interpreterInitHandler
+      gameRef.current && gameRef.current.interpreterInitHandler
     );
 
     function nextStep() {
@@ -42,15 +42,34 @@ export default function App() {
     nextStep();
   }
 
+  function handleCollision() {
+    console.log("COLLISION");
+  }
+
+  function handleFinish() {
+    console.log("FINISH");
+  }
+
   return (
     <div className="app">
       <div className="game-button-container">
-        <Game gameRef={game} map={map} player={player} />
+        <Game
+          gameRef={gameRef}
+          gameStatus={gameStatus}
+          onGameStatusChange={setGameStatus}
+          map={map}
+          player={player}
+          onCollision={handleCollision}
+          onFinish={handleFinish}
+        />
         <button onClick={handleRunClick} className="run-button">
           Run
         </button>
       </div>
-      <BlocklyWidget toolboxConfig={toolboxConfig} workspaceRef={workspace} />
+      <BlocklyWidget
+        blocklyToolboxConfig={blocklyToolboxConfig}
+        blocklyWorkspaceRef={blocklyWorkspaceRef}
+      />
     </div>
   );
 }

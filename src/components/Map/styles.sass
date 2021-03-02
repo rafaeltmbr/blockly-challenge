@@ -33,7 +33,9 @@
         display: flex
         align-items: center
         justify-content: center
-        font-size: calc(var(--square-size) * 0.75)
+        font-size: calc(var(--square-size) * 1)
+        color: #0011ff
+        font-weight: bold
 
   .player
     width: calc(100% / var(--columns))
@@ -47,7 +49,15 @@
     transition-duration: var(--animation-duration)
     transform: rotateZ(calc(var(--angle) * 1deg))
     line-height: var(--square-size)
+    font-size: 1.2rem
+    overflow: hidden
 
     --row: 0
     --column: 0
     --angle: 0
+
+    &.collision
+      color: red
+
+    &.finish
+      color: #00ff00

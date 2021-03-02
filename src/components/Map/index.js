@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import makeMapMatrix from "../../util/makeMapMatrix";
 import "./styles.sass";
 
-export default function Map({ map, player }) {
+export default function Map({ gameStatus, map, player }) {
   const [mapWidth, setMapWidth] = useState(0);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Map({ map, player }) {
         </div>
       ))}
       <div
-        className="player"
+        className={`player ${gameStatus || ""}`}
         style={{
           "--column": player.position[0],
           "--row": player.position[1],

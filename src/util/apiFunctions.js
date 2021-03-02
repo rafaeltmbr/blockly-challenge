@@ -7,17 +7,17 @@ export function forward() {
   else if (angle === 270 && this.player.position[1] + 1 < this.map.size.rows)
     this.player.position[1]++;
 
-  this.refreshScreen();
+  this.refresh();
 }
 
 export function turnLeft() {
   this.player.angle += 90;
-  this.refreshScreen();
+  this.refresh();
 }
 
 export function turnRight() {
   this.player.angle -= 90;
-  this.refreshScreen();
+  this.refresh();
 }
 
 const functions = {
