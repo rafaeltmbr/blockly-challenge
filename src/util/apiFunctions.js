@@ -1,3 +1,5 @@
+import checkFinish from "./checkFinish";
+
 export function forward() {
   const angle = Math.abs(this.player.angle + 360) % 360;
 
@@ -20,10 +22,15 @@ export function turnRight() {
   this.refresh();
 }
 
+export function notDone() {
+  return !checkFinish({ player: this.player, map: this.map });
+}
+
 const functions = {
   forward,
   turnLeft,
   turnRight,
+  notDone,
 };
 
 export default functions;

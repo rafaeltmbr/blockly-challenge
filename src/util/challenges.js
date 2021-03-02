@@ -29,7 +29,7 @@ const challenges = [
     toolbox: {
       blocks: {
         builtin: [],
-        custom: [movementForward, movementRotate],
+        custom: [movementForward, movementRotate, controlsRepeatUntilReachEnd],
       },
     },
     map: {
