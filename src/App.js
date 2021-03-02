@@ -5,6 +5,7 @@ import Blockly from "blockly";
 import "./App.sass";
 import challenges from "./util/challenges";
 import Game from "./components/Game";
+import PagingList from "./components/PagingList";
 import checkCollision from "./util/checkCollision";
 import checkFinish from "./util/checkFinish";
 
@@ -18,7 +19,7 @@ function getPlayerInitialCoordinates(start) {
   };
 }
 
-const instructionStepDelay = 500; // miliseconds
+const instructionStepDelay = 500; // milliseconds
 
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(2);
@@ -107,6 +108,11 @@ export default function App() {
   return (
     <div className="app">
       <div className="game-button-container">
+        <PagingList
+          total={challenges.length}
+          current={challengeIndex + 1}
+          onChange={(i) => setChallengeIndex(i - 1)}
+        />
         <Game
           gameRef={gameRef}
           gameStatus={gameStatus}
