@@ -19,7 +19,7 @@ function getPlayerInitialCoordinates(start) {
 }
 
 export default function App() {
-  const [challengeIndex, setChallengeIndex] = useState(0);
+  const [challengeIndex, setChallengeIndex] = useState(2);
   const [gameStatus, setGameStatus] = useState("stop");
   const blocklyWorkspaceRef = useRef(null);
   const gameRef = useRef(null);
@@ -59,7 +59,7 @@ export default function App() {
     function nextStep() {
       if (simulationStatus.status !== "running") return;
 
-      if (interpreter.step()) setTimeout(nextStep, 100);
+      if (interpreter.step()) setTimeout(nextStep, 50);
       else endOfSimulation();
     }
 
