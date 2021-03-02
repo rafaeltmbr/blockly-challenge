@@ -50,6 +50,9 @@ export default memo(function BlocklyWidget({ blocklyToolboxConfig, blocklyWorksp
     });
     setWorkspace(workspace);
 
+    Blockly.JavaScript.STATEMENT_PREFIX = "highlightBlock(%1);\n";
+    Blockly.JavaScript.addReservedWords("highlightBlock");
+
     return workspace.dispose.bind(workspace);
   }, [toolbox]);
 

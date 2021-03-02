@@ -6,7 +6,14 @@ import checkCollision from "../../util/checkCollision";
 
 import "./styles.sass";
 
-export default function Game({ gameRef, gameStatus, onGameStatusChange, map, player }) {
+export default function Game({
+  gameRef,
+  gameStatus,
+  onGameStatusChange,
+  map,
+  player,
+  blocklyWorkspaceRef,
+}) {
   const [, setRefresh] = useState();
 
   useEffect(() => {
@@ -25,7 +32,13 @@ export default function Game({ gameRef, gameStatus, onGameStatusChange, map, pla
   }, [setRefresh, onGameStatusChange, player, map]);
 
   function interpreterInitHandler(interpreter, globalObject) {
-    const that = { player, map, refresh };
+    const that = {
+      player,
+      map,
+      workspace: blocklyWorkspaceRef && blocklyWorkspaceRef.current,
+      refresh,
+    };
+
     Object.keys(apiFunctions).forEach((key) => {
       interpreter.setProperty(
         globalObject,

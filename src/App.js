@@ -18,6 +18,8 @@ function getPlayerInitialCoordinates(start) {
   };
 }
 
+const instructionStepDelay = 500; // miliseconds
+
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(2);
   const [gameStatus, setGameStatus] = useState("stop");
@@ -30,6 +32,8 @@ export default function App() {
     simulationStatus.status = gameStatus;
   }, [gameStatus, simulationStatus]);
 
+  useEffect(turnLastHighlightedBlockOff, [gameStatus]);
+
   const blocklyToolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
   }, [challengeIndex]);
@@ -37,6 +41,19 @@ export default function App() {
   const map = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].map;
   }, [challengeIndex]);
+
+  function turnLastHighlightedBlockOff() {
+    if (blocklyWorkspaceRef.current) blocklyWorkspaceRef.current.highlightBlock();
+  }
+
+  function needExecutionDelay() {
+    const delayedFunctions = ["forward", "turnLeft", "turnRight"];
+    const found = delayedFunctions.find(
+      (f) => f === blocklyWorkspaceRef.current.lastExecutedFunction
+    );
+    blocklyWorkspaceRef.current.lastExecutedFunction = "";
+    return found;
+  }
 
   function handleRunClick() {
     if (!blocklyWorkspaceRef.current) return;
@@ -59,7 +76,7 @@ export default function App() {
     function nextStep() {
       if (simulationStatus.status !== "running") return;
 
-      if (interpreter.step()) setTimeout(nextStep, 50);
+      if (interpreter.step()) setTimeout(nextStep, needExecutionDelay() ? instructionStepDelay : 0);
       else endOfSimulation();
     }
 
@@ -96,6 +113,7 @@ export default function App() {
           onGameStatusChange={setGameStatus}
           map={map}
           player={player}
+          blocklyWorkspaceRef={blocklyWorkspaceRef}
         />
         <button onClick={buttonClickHandlers[gameStatus]} className={`run-button ${gameStatus}`} />
       </div>
