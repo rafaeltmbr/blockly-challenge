@@ -36,6 +36,22 @@
     user-select: none
     box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.5)
 
+    &::before
+      content: "Run"
+
+    &.running
+      background-color: #6387f3
+      &::before
+        content: "Stop"
+
+    &.collision, &.fail
+      &::before
+        content: "Reset"
+
+    &.finish
+      &::before
+        content: "Next"
+
   .game-button-container .game
     margin-bottom: 1rem
 

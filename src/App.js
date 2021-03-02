@@ -1,22 +1,34 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import BlocklyWidget from "./components/BlocklyWidget";
 import Blockly from "blockly";
 
 import "./App.sass";
 import challenges from "./util/challenges";
 import Game from "./components/Game";
+import checkCollision from "./util/checkCollision";
+import checkFinish from "./util/checkFinish";
 
-const playerInitialCoordinate = {
-  angle: 0,
-  position: [0, 0],
-};
+function getPlayerInitialCoordinates(start) {
+  const x = (Array.isArray(start) && start[0]) || 0;
+  const y = (Array.isArray(start) && start[1]) || 0;
+
+  return {
+    angle: 0,
+    position: [x, y],
+  };
+}
 
 export default function App() {
   const [challengeIndex, setChallengeIndex] = useState(0);
-  const [gameStatus, setGameStatus] = useState("");
+  const [gameStatus, setGameStatus] = useState("stop");
   const blocklyWorkspaceRef = useRef(null);
   const gameRef = useRef(null);
-  const player = useMemo(() => playerInitialCoordinate, []);
+  const player = useMemo(getPlayerInitialCoordinates, []);
+  const simulationStatus = useMemo(() => ({ status: "stop" }), []);
+
+  useEffect(() => {
+    simulationStatus.status = gameStatus;
+  }, [gameStatus, simulationStatus]);
 
   const blocklyToolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
@@ -35,20 +47,44 @@ export default function App() {
       gameRef.current && gameRef.current.interpreterInitHandler
     );
 
+    function endOfSimulation() {
+      if (checkCollision({ player, map })) setGameStatus("collision");
+      else if (checkFinish({ player, map })) setGameStatus("finish");
+      else setGameStatus("fail");
+    }
+
+    simulationStatus.status = "running";
+    setGameStatus("running");
+
     function nextStep() {
-      if (interpreter.step()) setTimeout(nextStep, 200);
+      if (simulationStatus.status !== "running") return;
+
+      if (interpreter.step()) setTimeout(nextStep, 100);
+      else endOfSimulation();
     }
 
     nextStep();
   }
 
-  function handleCollision() {
-    console.log("COLLISION");
+  function handleStopResetClick() {
+    Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex].map.start));
+    setGameStatus("stop");
   }
 
-  function handleFinish() {
-    console.log("FINISH");
+  function handleNextClick() {
+    if (challengeIndex + 1 < challenges.length) {
+      setChallengeIndex(challenges + 1);
+      setGameStatus("stop");
+    }
   }
+
+  const buttonClickHandlers = {
+    stop: handleRunClick,
+    running: handleStopResetClick,
+    collision: handleStopResetClick,
+    fail: handleStopResetClick,
+    finish: handleNextClick,
+  };
 
   return (
     <div className="app">
@@ -59,12 +95,8 @@ export default function App() {
           onGameStatusChange={setGameStatus}
           map={map}
           player={player}
-          onCollision={handleCollision}
-          onFinish={handleFinish}
         />
-        <button onClick={handleRunClick} className="run-button">
-          Run
-        </button>
+        <button onClick={buttonClickHandlers[gameStatus]} className={`run-button ${gameStatus}`} />
       </div>
       <BlocklyWidget
         blocklyToolboxConfig={blocklyToolboxConfig}

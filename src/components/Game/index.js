@@ -3,28 +3,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import Map from "../Map";
 import apiFunctions from "../../util/apiFunctions";
 import checkCollision from "../../util/checkCollision";
-import checkFinish from "../../util/checkFinish";
 
 import "./styles.sass";
 
-export default function Game({
-  gameRef,
-  gameStatus,
-  onGameStatusChange,
-  map,
-  player,
-  onCollision,
-  onFinish,
-}) {
+export default function Game({ gameRef, gameStatus, onGameStatusChange, map, player }) {
   const [, setRefresh] = useState();
-
-  useEffect(() => {
-    if (gameStatus === "collision") {
-      onCollision && onCollision();
-    } else if (gameStatus === "finish") {
-      onFinish && onFinish();
-    }
-  }, [gameStatus, onCollision, onFinish]);
 
   useEffect(() => {
     if (!map.start) return;
@@ -36,12 +19,10 @@ export default function Game({
   const refresh = useCallback(() => {
     if (checkCollision({ player, map })) {
       onGameStatusChange("collision");
-    } else if (checkFinish({ player, map })) {
-      onGameStatusChange("finish");
     }
 
     setRefresh({});
-  }, [setRefresh]);
+  }, [setRefresh, onGameStatusChange, player, map]);
 
   function interpreterInitHandler(interpreter, globalObject) {
     const that = { player, map, refresh };
