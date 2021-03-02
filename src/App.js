@@ -97,6 +97,12 @@ export default function App() {
     }
   }
 
+  function handlePagingClick(pageIndex) {
+    setChallengeIndex(pageIndex - 1);
+    Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex].map.start));
+    setGameStatus("stop");
+  }
+
   const buttonClickHandlers = {
     stop: handleRunClick,
     running: handleStopResetClick,
@@ -111,7 +117,7 @@ export default function App() {
         <PagingList
           total={challenges.length}
           current={challengeIndex + 1}
-          onChange={(i) => setChallengeIndex(i - 1)}
+          onChange={handlePagingClick}
         />
         <Game
           gameRef={gameRef}
