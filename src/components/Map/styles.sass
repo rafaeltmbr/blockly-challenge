@@ -12,6 +12,7 @@
   --map-width: calc(10 * 1rem)
   --color-extern: #a1aaf8
   --color-path: #e2e4f7
+  --color-path-line: rgb(161, 170, 248, 0.4)
   --square-size: calc((1px * var(--map-width) - 2rem) / var(--columns))
 
   .row
@@ -21,10 +22,11 @@
     .column
       width: calc(100% / var(--columns))
       height: var(--square-size)
-      background-color: cyan
 
       &.path, &.finish, &.start
         background-color: var(--color-path)
+        border-top: 1px solid var(--color-path-line)
+        border-right: 1px solid var(--color-path-line)
 
       &.extern
         background-color: var(--color-extern)
@@ -33,9 +35,8 @@
         display: flex
         align-items: center
         justify-content: center
-        font-size: calc(var(--square-size) * 1)
+        font-size: calc(var(--square-size) * 0.9 )
         color: #0011ff
-        font-weight: bold
 
   .player
     width: calc(100% / var(--columns))
@@ -49,7 +50,6 @@
     transition-duration: var(--animation-duration)
     transform: rotateZ(calc(var(--angle) * 1deg))
     line-height: var(--square-size)
-    font-size: 1.2rem
     overflow: hidden
 
     --row: 0

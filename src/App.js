@@ -73,7 +73,8 @@ export default function App() {
 
   function handleNextClick() {
     if (challengeIndex + 1 < challenges.length) {
-      setChallengeIndex(challenges + 1);
+      setChallengeIndex(challengeIndex + 1);
+      Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex].map.start));
       setGameStatus("stop");
     }
   }
