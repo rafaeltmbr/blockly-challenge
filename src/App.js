@@ -97,14 +97,14 @@ export default function App() {
   function handleNextClick() {
     if (challengeIndex + 1 < challenges.length) {
       setChallengeIndex(challengeIndex + 1);
-      Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex].map.start));
+      Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex + 1].map.start));
       setGameStatus("stop");
     }
   }
 
   function handlePagingClick(pageIndex) {
     setChallengeIndex(pageIndex - 1);
-    Object.assign(player, getPlayerInitialCoordinates(challenges[challengeIndex].map.start));
+    Object.assign(player, getPlayerInitialCoordinates(challenges[pageIndex - 1].map.start));
     setGameStatus("stop");
   }
 
