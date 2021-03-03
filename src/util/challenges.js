@@ -47,6 +47,9 @@ const challenges = [
       start: [9, 10],
       finish: [11, 5],
     },
+    blockly: {
+      maxBlocks: 5,
+    },
   },
   {
     toolbox: {
@@ -72,6 +75,9 @@ const challenges = [
       ],
       start: [9, 10],
       finish: [14, 5],
+    },
+    blockly: {
+      maxBlocks: 7,
     },
   },
 ];

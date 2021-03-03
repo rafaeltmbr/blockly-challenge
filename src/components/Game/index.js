@@ -13,6 +13,7 @@ export default function Game({
   map,
   player,
   blocklyWorkspaceRef,
+  remainingBlocks,
 }) {
   const [, setRefresh] = useState();
 
@@ -53,6 +54,9 @@ export default function Game({
   return (
     <div className="game">
       <Map gameStatus={gameStatus} player={player} map={map} />
+      {remainingBlocks !== Infinity && (
+        <div className="remaining-blocks-container">{`Remaining blocks: ${remainingBlocks}`}</div>
+      )}
     </div>
   );
 }

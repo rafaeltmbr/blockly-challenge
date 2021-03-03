@@ -3,7 +3,13 @@ import Blockly from "blockly";
 
 import "./styles.sass";
 
-export default memo(function BlocklyWidget({ blocklyToolboxConfig, blocklyWorkspaceRef, style }) {
+export default memo(function BlocklyWidget({
+  blocklyConfig,
+  blocklyToolboxConfig,
+  blocklyWorkspaceRef,
+  setRemainingBlocks,
+  style,
+}) {
   const [workspace, setWorkspace] = useState(null);
 
   const blocks = blocklyToolboxConfig && blocklyToolboxConfig.blocks;
@@ -26,6 +32,16 @@ export default memo(function BlocklyWidget({ blocklyToolboxConfig, blocklyWorksp
     });
   }, [workspace, blocks]);
 
+  useEffect(() => {
+    if (!workspace) return;
+
+    workspace.addChangeListener(() => {
+      setRemainingBlocks(workspace.remainingCapacity());
+    });
+
+    setRemainingBlocks(workspace.remainingCapacity());
+  }, [workspace, setRemainingBlocks]);
+
   const toolbox = useMemo(() => {
     if (!blocks || (!blocks.builtin && !blocks.custom)) return;
 
@@ -44,17 +60,15 @@ export default memo(function BlocklyWidget({ blocklyToolboxConfig, blocklyWorksp
   }, [blocks]);
 
   useEffect(() => {
-    const workspace = Blockly.inject(document.querySelector(".blockly-div"), {
-      toolbox,
-      trashcan: true,
-    });
+    const config = { ...(blocklyConfig || {}), toolbox, trashcan: true };
+    const workspace = Blockly.inject(document.querySelector(".blockly-div"), config);
     setWorkspace(workspace);
 
     Blockly.JavaScript.STATEMENT_PREFIX = "highlightBlock(%1);\n";
     Blockly.JavaScript.addReservedWords("highlightBlock");
 
     return workspace.dispose.bind(workspace);
-  }, [toolbox]);
+  }, [toolbox, blocklyConfig]);
 
   useEffect(() => {
     blocklyWorkspaceRef.current = workspace;

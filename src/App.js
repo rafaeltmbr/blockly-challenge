@@ -22,8 +22,9 @@ function getPlayerInitialCoordinates(start) {
 const instructionStepDelay = 500; // milliseconds
 
 export default function App() {
-  const [challengeIndex, setChallengeIndex] = useState(2);
+  const [challengeIndex, setChallengeIndex] = useState(0);
   const [gameStatus, setGameStatus] = useState("stop");
+  const [remainingBlocks, setRemainingBlocks] = useState(Infinity);
   const blocklyWorkspaceRef = useRef(null);
   const gameRef = useRef(null);
   const player = useMemo(getPlayerInitialCoordinates, []);
@@ -37,6 +38,10 @@ export default function App() {
 
   const blocklyToolboxConfig = useMemo(() => {
     return challenges[challengeIndex] && challenges[challengeIndex].toolbox;
+  }, [challengeIndex]);
+
+  const blocklyConfig = useMemo(() => {
+    return challenges[challengeIndex] && challenges[challengeIndex].blockly;
   }, [challengeIndex]);
 
   const map = useMemo(() => {
@@ -120,6 +125,8 @@ export default function App() {
           onChange={handlePagingClick}
         />
         <Game
+          remainingBlocks={remainingBlocks}
+          setRemainingBlocks={setRemainingBlocks}
           gameRef={gameRef}
           gameStatus={gameStatus}
           onGameStatusChange={setGameStatus}
@@ -130,7 +137,9 @@ export default function App() {
         <button onClick={buttonClickHandlers[gameStatus]} className={`run-button ${gameStatus}`} />
       </div>
       <BlocklyWidget
+        setRemainingBlocks={setRemainingBlocks}
         blocklyToolboxConfig={blocklyToolboxConfig}
+        blocklyConfig={blocklyConfig}
         blocklyWorkspaceRef={blocklyWorkspaceRef}
       />
     </div>
