@@ -1,5 +1,24 @@
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#8wpthh
-export const movementForward = {
+interface BlocklyArgs {
+  type: string;
+  name?: string;
+  options?: Array<Array<string>>;
+}
+
+export interface BlocklyComponent {
+  type: string;
+  message0: string;
+  args0?: BlocklyArgs[];
+  inputsInline?: boolean;
+  previousStatement: object | null;
+  nextStatement: object | null;
+  colour: number;
+  tooltip: string;
+  helpUrl: string;
+  generatorCallback(block?: any): void;
+}
+
+export const movementForward: BlocklyComponent = {
   type: "movement_forward",
   message0: "forward",
   previousStatement: null,
@@ -11,7 +30,7 @@ export const movementForward = {
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#83j9gt
-export const movementRotate = {
+export const movementRotate: BlocklyComponent = {
   type: "movement_rotate",
   message0: "turn %1 %2",
   args0: [
@@ -38,7 +57,7 @@ export const movementRotate = {
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#m5x4ff
-export const controlsIfPath = {
+export const controlsIfPath: BlocklyComponent = {
   type: "controls_if_path",
   message0: "if path %1 %2 %3 do %4",
   args0: [
@@ -78,13 +97,13 @@ export const controlsIfPath = {
         : "isPathToRight()";
 
     return `if (${condition}) {
-  ${window.Blockly.JavaScript.statementToCode(block, "statement") || ""}
+  ${(window as any).Blockly.JavaScript.statementToCode(block, "statement") || ""}
 }`;
   },
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#buty92
-export const controlsIfElsePath = {
+export const controlsIfElsePath: BlocklyComponent = {
   type: "controls_if_else_path",
   message0: "if path %1 %2 %3 do %4 else %5",
   args0: [
@@ -129,15 +148,15 @@ export const controlsIfElsePath = {
         : "isPathToRight()";
 
     return `if (${condition}) {
-  ${window.Blockly.JavaScript.statementToCode(block, "truthy_statement") || ""}
+  ${(window as any).Blockly.JavaScript.statementToCode(block, "truthy_statement") || ""}
 } else {
-  ${window.Blockly.JavaScript.statementToCode(block, "falsy_statement") || ""}
+  ${(window as any).Blockly.JavaScript.statementToCode(block, "falsy_statement") || ""}
 }`;
   },
 };
 
 // source: https://blockly-demo.appspot.com/static/demos/blockfactory/index.html#9ag263
-export const controlsRepeatUntilReachEnd = {
+export const controlsRepeatUntilReachEnd: BlocklyComponent = {
   type: "controls_repeat_until_reach_end",
   message0: "repeat until ⚐ %1 do %2",
   args0: [
@@ -155,7 +174,7 @@ export const controlsRepeatUntilReachEnd = {
   tooltip: "Repeat the inside code until end is reached",
   helpUrl: "",
   generatorCallback: (block) => `while (notDone()) {
-  ${window.Blockly.JavaScript.statementToCode(block, "statement") || ""}
+  ${(window as any).Blockly.JavaScript.statementToCode(block, "statement") || ""}
 }`,
 };
 

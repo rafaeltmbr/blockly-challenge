@@ -3,32 +3,51 @@ import Blockly from "blockly";
 
 import "./styles.sass";
 
+import { IBlockly, ToolboxConfig } from "../../util/challenges";
+import { BlocklyComponent } from "../../util/customBlocks";
+
+export interface Props {
+  blocklyConfig: IBlockly;
+  blocklyToolboxConfig: ToolboxConfig;
+  blocklyWorkspaceRef: React.MutableRefObject<Blockly.WorkspaceSvg | null>;
+  setRemainingBlocks: React.Dispatch<React.SetStateAction<number>>;
+  style?: React.CSSProperties;
+}
+
+export interface Toolbox {
+  kind: string;
+  contents: {
+    kind: string;
+    type: BlocklyComponent | string;
+  }[];
+}
+
 export default memo(function BlocklyWidget({
   blocklyConfig,
   blocklyToolboxConfig,
   blocklyWorkspaceRef,
   setRemainingBlocks,
   style,
-}) {
-  const [workspace, setWorkspace] = useState(null);
+}: Props) {
+  const [workspace, setWorkspace] = useState<Blockly.WorkspaceSvg | null>(null);
 
-  const blocks = blocklyToolboxConfig && blocklyToolboxConfig.blocks;
+  const blocks = blocklyToolboxConfig.blocks;
 
   useEffect(() => {
     window.Blockly = Blockly;
-  });
+  }, []);
 
   useEffect(() => {
-    if (!blocks || !Array.isArray(blocks.custom)) return;
+    if (!blocks.custom) return;
 
     blocks.custom.forEach((block) => {
       Blockly.Blocks[block.type] = {
         init: function () {
-          this.jsonInit(block);
+          (this as any).jsonInit(block);
         },
       };
 
-      Blockly.JavaScript[block.type] = block.generatorCallback;
+      (Blockly as any).JavaScript[block.type] = block.generatorCallback;
     });
   }, [workspace, blocks]);
 
@@ -42,10 +61,10 @@ export default memo(function BlocklyWidget({
     setRemainingBlocks(workspace.remainingCapacity());
   }, [workspace, setRemainingBlocks]);
 
-  const toolbox = useMemo(() => {
-    if (!blocks || (!blocks.builtin && !blocks.custom)) return;
+  const toolbox: Toolbox = useMemo(() => {
+    if (!blocks.builtin && !blocks.custom) return { kind: "", contents: [] };
 
-    const toolbox = {
+    const toolbox: Toolbox = {
       kind: "flyoutToolbox",
       contents: [],
     };
@@ -60,12 +79,19 @@ export default memo(function BlocklyWidget({
   }, [blocks]);
 
   useEffect(() => {
-    const config = { ...(blocklyConfig || {}), toolbox, trashcan: true };
-    const workspace = Blockly.inject(document.querySelector(".blockly-div"), config);
+    const config: Blockly.BlocklyOptions = {
+      ...(blocklyConfig || {}),
+      toolbox: (toolbox as unknown) as HTMLElement,
+      trashcan: true,
+    };
+    const blocklyDiv = document.querySelector(".blockly-div");
+
+    if (!blocklyDiv) return;
+    const workspace = Blockly.inject(blocklyDiv, config);
     setWorkspace(workspace);
 
-    Blockly.JavaScript.STATEMENT_PREFIX = "highlightBlock(%1);\n";
-    Blockly.JavaScript.addReservedWords("highlightBlock");
+    (Blockly as any).JavaScript.STATEMENT_PREFIX = "highlightBlock(%1);\n";
+    (Blockly as any).JavaScript.addReservedWords("highlightBlock");
 
     return workspace.dispose.bind(workspace);
   }, [toolbox, blocklyConfig]);
