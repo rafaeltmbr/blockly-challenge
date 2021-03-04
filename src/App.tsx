@@ -2,7 +2,11 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import BlocklyWidget from "./components/BlocklyWidget";
 import Blockly from "blockly";
 
-import "./App.sass";
+import { ThemeProvider } from "styled-components";
+import lightTheme from "./styles/theme/light";
+import GlobalStyle from "./styles/global";
+import { App, AppGlobal, GameButtonContainer, Button } from "./styles";
+
 import challenges from "./util/challenges";
 import Game, { GameStatus, GameRef } from "./components/Game";
 import PagingList from "./components/PagingList";
@@ -13,7 +17,7 @@ import gameStatusToString from "./util/gameStatusToString";
 
 const instructionStepDelay = 500; // milliseconds
 
-export default function App() {
+export default function Apps() {
   const [challengeIndex, setChallengeIndex] = useState<number>(0);
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Stop);
   const [remainingBlocks, setRemainingBlocks] = useState<number>(Infinity);
@@ -124,33 +128,37 @@ export default function App() {
   }
 
   return (
-    <div className="app">
-      <div className="game-button-container">
-        <PagingList
-          total={challenges.length}
-          current={challengeIndex + 1}
-          onChange={handlePagingClick}
-        />
-        <Game
-          remainingBlocks={remainingBlocks}
-          gameRef={gameRef}
-          gameStatus={gameStatus}
-          onGameStatusChange={setGameStatus}
-          map={map}
-          player={player}
+    <ThemeProvider theme={lightTheme}>
+      <App className="app">
+        <GlobalStyle />
+        <AppGlobal />
+        <GameButtonContainer className="game-button-container">
+          <PagingList
+            total={challenges.length}
+            current={challengeIndex + 1}
+            onChange={handlePagingClick}
+          />
+          <Game
+            remainingBlocks={remainingBlocks}
+            gameRef={gameRef}
+            gameStatus={gameStatus}
+            onGameStatusChange={setGameStatus}
+            map={map}
+            player={player}
+            blocklyWorkspaceRef={blocklyWorkspaceRef}
+          />
+          <Button
+            onClick={handleButtonClick}
+            className={`run-button ${gameStatusToString(gameStatus)}`}
+          />
+        </GameButtonContainer>
+        <BlocklyWidget
+          setRemainingBlocks={setRemainingBlocks}
+          blocklyToolboxConfig={blocklyToolboxConfig}
+          blocklyConfig={blocklyConfig}
           blocklyWorkspaceRef={blocklyWorkspaceRef}
         />
-        <button
-          onClick={handleButtonClick}
-          className={`run-button ${gameStatusToString(gameStatus)}`}
-        />
-      </div>
-      <BlocklyWidget
-        setRemainingBlocks={setRemainingBlocks}
-        blocklyToolboxConfig={blocklyToolboxConfig}
-        blocklyConfig={blocklyConfig}
-        blocklyWorkspaceRef={blocklyWorkspaceRef}
-      />
-    </div>
+      </App>
+    </ThemeProvider>
   );
 }

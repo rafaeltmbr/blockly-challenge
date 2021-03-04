@@ -1,4 +1,6 @@
-import "./styles.sass";
+import "./styles.ts";
+
+import { PagingList, PagingItem } from "./styles";
 
 export interface Props {
   total: number;
@@ -14,12 +16,12 @@ export default function PaginList({ total, current, onChange }: Props) {
   for (let i = start; i <= end; i++) indexes.push(i);
 
   return (
-    <ul className="paging-list">
+    <PagingList className="paging-list">
       {indexes.map((i) => (
-        <li key={`${i}`} className={i === current ? "selected" : ""} onClick={() => onChange(i)}>
+        <PagingItem key={`${i}`} data-selected={i === current} onClick={() => onChange(i)}>
           {i}
-        </li>
+        </PagingItem>
       ))}
-    </ul>
+    </PagingList>
   );
 }

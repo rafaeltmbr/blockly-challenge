@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Blockly from "blockly";
 
+import { Game, RemainingBlocksContainer } from "./styles";
 import Map from "../Map";
 import apiFunctions, { ApiFunctions } from "../../util/apiFunctions";
 import checkCollision from "../../util/checkCollision";
 import { Map as IMap } from "../../util/challenges";
 import { PlayerCoordinates } from "../../util/getInitialPlayerCoordinates";
 import { This } from "../../util/apiFunctions";
-
-import "./styles.sass";
 
 export enum GameStatus {
   Running,
@@ -32,7 +31,7 @@ export interface GameRef {
   interpreterInitHandler(interpreter: object, globalObject: object): void;
 }
 
-export default function Game({
+export default function Games({
   gameRef,
   gameStatus,
   onGameStatusChange,
@@ -80,11 +79,11 @@ export default function Game({
   gameRef.current = { interpreterInitHandler };
 
   return (
-    <div className="game">
+    <Game className="game">
       <Map gameStatus={gameStatus} player={player} map={map} />
       {remainingBlocks !== Infinity && (
-        <div className="remaining-blocks-container">{`Remaining blocks: ${remainingBlocks}`}</div>
+        <RemainingBlocksContainer>{`Remaining blocks: ${remainingBlocks}`}</RemainingBlocksContainer>
       )}
-    </div>
+    </Game>
   );
 }

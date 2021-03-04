@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, memo } from "react";
 import Blockly from "blockly";
 
-import "./styles.sass";
+import { BlocklyDiv } from "./styles";
 
 import { IBlockly, ToolboxConfig } from "../../util/challenges";
 import { BlocklyComponent } from "../../util/customBlocks";
@@ -100,5 +100,5 @@ export default memo(function BlocklyWidget({
     blocklyWorkspaceRef.current = workspace;
   }, [workspace, blocklyWorkspaceRef]);
 
-  return <div className="blockly-div" style={style} />;
+  return <BlocklyDiv className="blockly-div" style={style} />;
 });
